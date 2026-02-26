@@ -9,7 +9,18 @@
   "scripts": {
     "test": "echo \"Error: no test specified\" && exit 1"
   },
-  "keywords": ["wechat", "mp", "公众号"],
-  "author": "Jarvis",
-  "license": "MIT"
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/lento9527/wechat-mp.git"
+  },
+  "bugs": {
+    "url": "https://github.com/lento9527/wechat-mp/issues"
+  },
+  "homepage": "https://github.com/lento9527/wechat-mp#readme",
+  "keywords": ["wechat", "mp", "公众号", "weixin", "微信"],
+  "author": "lento9527",
+  "license": "MIT",
+  "engines": {
+    "node": ">=14.0.0"
+  }
 }

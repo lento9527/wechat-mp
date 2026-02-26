@@ -33,7 +33,7 @@ author: Jarvis
 ### 1. 发布图文消息
 
 ```bash
-openclaw wechat-mp publish \
+node index.js publish \
   --title "文章标题" \
   --content "文章内容（支持HTML）" \
   --thumb "封面图URL或本地路径" \
@@ -43,7 +43,7 @@ openclaw wechat-mp publish \
 ### 2. 创建草稿（不发布）
 
 ```bash
-openclaw wechat-mp draft \
+node index.js draft \
   --title "草稿标题" \
   --content "内容"
 ```
@@ -51,7 +51,7 @@ openclaw wechat-mp draft \
 ### 3. 获取 Access Token
 
 ```bash
-openclaw wechat-mp token
+node index.js token
 ```
 
 ## API 参考
