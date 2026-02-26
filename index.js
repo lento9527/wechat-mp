@@ -7,6 +7,9 @@ const https = require('https');
 const fs = require('fs');
 const path = require('path');
 
+// 引入封面生成器
+const { generateCoverImage } = require('./cover-generator');
+
 const CONFIG_PATH = path.join(__dirname, 'config.json');
 
 // 读取配置
@@ -88,6 +91,8 @@ async function getDefaultThumbMediaId(token) {
     return null;
   }
 }
+
+// 上传图片素材 (multipart/form-data)
 async function uploadThumbImage(token, imagePath) {
   return new Promise((resolve, reject) => {
     const boundary = '----WebKitFormBoundary' + Math.random().toString(36).substring(2);
@@ -194,7 +199,7 @@ async function main() {
 📢 WeChat MP Publisher - 微信公众号发布工具
 
 用法:
-  openclaw wechat-mp <command> [options]
+  node index.js <command> [options]
 
 命令:
   token                    获取 access_token
@@ -204,19 +209,23 @@ async function main() {
 
 示例:
   # 创建草稿（无封面）
-  openclaw wechat-mp draft --title "标题" --content "内容"
+  node index.js draft --title "标题" --content "内容"
 
-  # 创建草稿（带封面）
-  openclaw wechat-mp draft --title "标题" --content "内容" --thumb "/path/to/image.jpg"
+  # 创建草稿（带指定封面）
+  node index.js draft --title "标题" --content "内容" --thumb "/path/to/image.jpg"
+
+  # 创建草稿（自动生成封面）
+  node index.js draft --title "标题" --content "内容" --auto-cover
 
   # 发布文章（带网络封面图）
-  openclaw wechat-mp publish --title "标题" --content "内容" --thumb "https://example.com/image.jpg" --digest "摘要"
+  node index.js publish --title "标题" --content "内容" --thumb "https://example.com/image.jpg" --digest "摘要"
 
 参数:
-  --title    文章标题（必需）
-  --content  文章内容，支持HTML（必需）
-  --thumb    封面图路径或URL（可选）
-  --digest   文章摘要（可选）
+  --title       文章标题（必需）
+  --content     文章内容，支持HTML（必需）
+  --thumb       封面图路径或URL（可选）
+  --auto-cover  根据内容自动生成封面图（可选）
+  --digest      文章摘要（可选）
 `);
     return;
   }
@@ -279,6 +288,27 @@ async function main() {
           }
         } catch (err) {
           console.error('⚠️ 封面上传失败:', err.message);
+          console.log('   尝试使用默认封面...');
+          thumbMediaId = await getDefaultThumbMediaId(accessToken);
+          if (thumbMediaId) {
+            console.log('   使用默认封面成功!');
+          }
+        }
+      } else if (params['auto-cover'] !== undefined) {
+        // 自动生成封面图
+        console.log('🎨 自动生成封面图...');
+        try {
+          const coverPath = await generateCoverImage(params.title, params.content);
+          console.log('   封面图生成成功:', coverPath);
+          
+          // 上传生成的封面图
+          thumbMediaId = await uploadThumbImage(accessToken, coverPath);
+          console.log('   封面上传成功!');
+          
+          // 清理临时文件
+          fs.unlinkSync(coverPath);
+        } catch (err) {
+          console.error('⚠️ 自动生成封面失败:', err.message);
           console.log('   尝试使用默认封面...');
           thumbMediaId = await getDefaultThumbMediaId(accessToken);
           if (thumbMediaId) {
