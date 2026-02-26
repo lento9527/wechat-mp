@@ -13,8 +13,8 @@
 ## 安装
 
 ```bash
-git clone https://github.com/YOUR_USERNAME/wechat-mp-publisher.git
-cd wechat-mp-publisher
+git clone https://github.com/lento9527/wechat-mp.git
+cd wechat-mp
 npm install
 ```
 
