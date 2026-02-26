@@ -2,7 +2,7 @@
 name: WeChat MP Publisher
 description: 微信公众号文章发布工具。支持草稿创建、图文消息发布、定时群发等功能。
 version: 1.0.0
-author: Jarvis
+author: lento9527
 ---
 
 # WeChat MP Publisher
