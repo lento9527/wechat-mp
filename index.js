@@ -316,14 +316,28 @@ async function main() {
           }
         }
       } else {
-        // 没有提供封面，使用默认封面
-        console.log('🖼️  使用默认封面图...');
-        thumbMediaId = await getDefaultThumbMediaId(accessToken);
-        if (thumbMediaId) {
-          console.log('   默认封面设置成功!');
-        } else {
-          console.error('❌ 没有可用的封面图，请先上传图片到素材库');
-          process.exit(1);
+        // 没有提供封面，自动生成封面
+        console.log('🎨 自动生成封面图...');
+        try {
+          const coverPath = await generateCoverImage(params.title, params.content);
+          console.log('   封面图生成成功:', coverPath);
+          
+          // 上传生成的封面图
+          thumbMediaId = await uploadThumbImage(accessToken, coverPath);
+          console.log('   封面上传成功!');
+          
+          // 清理临时文件
+          fs.unlinkSync(coverPath);
+        } catch (err) {
+          console.error('⚠️ 自动生成封面失败:', err.message);
+          console.log('   尝试使用默认封面...');
+          thumbMediaId = await getDefaultThumbMediaId(accessToken);
+          if (thumbMediaId) {
+            console.log('   默认封面设置成功!');
+          } else {
+            console.error('❌ 没有可用的封面图');
+            process.exit(1);
+          }
         }
       }
       
